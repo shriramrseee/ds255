@@ -22,9 +22,9 @@
 		      \begin{center}
 		         \includegraphics[scale=0.4]{1.png}		
 		      \end{center}
-		These privileges are necessary to enable the OS to establish control over the system and restrict user processes from gaining arbitrary access to more resources or memory space of other processes. Modern Operating systems typically support Level 0 (Kernel) and Level 1 (User) execution modes. \\
+		These privileges are necessary to enable the OS to establish control over the system and restrict user processes from gaining arbitrary access to more resources or memory space of other processes. Modern Operating systems typically support Level 0 (Kernel) and Level 1 (User) execution modes.
 		
-		For x86, the current mode of execution can be determined by examining the lower two-bits set in code segment register. This should be similar in the other architectures as well. \\
+		For x86, the current mode of execution can be determined by examining the lower two-bits set in code segment register. This should be similar in the other architectures as well.
 		
 		A proess can change its privilege from user mode to kernel mode by making a system call. Note that a process cannot execute arbitray instructions of its own during kernel mode. The following happens when a system call is made,
 		\begin{enumerate}
@@ -36,15 +36,26 @@
 	   
 	    \begin{verbatim}
 	    
+	    
+	    
+	    
 	    \end{verbatim}
 	
 		
-		\item
-		\item	
-		\item		
-		%\begin{center}
-		%	\includegraphics[scale=1.0]{3.png}		
-		%\end{center}		
+		\item The schematic of process address space organization in 32-bit Linux is given below,
+				  \begin{center}
+				  	\includegraphics[scale=0.5]{2.png}		
+				  \end{center}
+		The split between user (process) and kernel space is present at 0xC0000000 which is 75\% through the space. The heap and stack space of a process can grow and shrink dynamically. Note that the heap space grows in the increasing address direction while the stack space grows in the decreasing direction. 
+		
+		The kernel logical address space holds most of the kernel data structures. There exists a direct mapping between kernel logical address and the first part of physical memory. This implies that the kernel logical memory is contiguous in the physical memory as well.
+		
+		The kernel virtual address is not physically contiguousand these are typically used for allocating large buffers. Note that a process will not have access to the entire kernel memory space.
+		
+		\item A process interfaces to I/O devices through files (file descriptors). Concurrency has to be handled by the interface (i.e) the requests made to I/O device has to be serialized by the interface.
+		
+			
+		\item				
 				
 	\end{enumerate}
     
