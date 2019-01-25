@@ -50,9 +50,21 @@
 		
 		The kernel logical address space holds most of the kernel data structures. There exists a direct mapping between kernel logical address and the first part of physical memory. This implies that the kernel logical memory is contiguous in the physical memory as well.
 		
-		The kernel virtual address is not physically contiguousand these are typically used for allocating large buffers. Note that a process will not have access to the entire kernel memory space.
+		The kernel virtual address is not physically contiguous and these are typically used for allocating large buffers. Note that a process will not have access to the entire kernel memory space.
 		
-		\item A process interfaces to I/O devices through files (file descriptors). Concurrency has to be handled by the interface (i.e) the requests made to I/O device has to be serialized by the interface.
+		\item A process interfaces to I/O devices in UNIX like systems through files (file descriptors). Concurrency has to be handled by the interface (i.e) the requests made to I/O device has to be serialized by the interface provided by OS. 
+		
+		Unix based systems provide flock() system call which can be used to apply or remove an advisory lock on an open file. For example, if cooperating two processes A and B are writing concurrently to a file F, the processes can coordinate by using an exclusive lock on F. The process (A or B) which acquires the lock will write to the file while the other process will get blocked waiting for the lock. A pseudocode for the operation is given below,
+		
+		\begin{verbatim}
+		   // Pseudocode for process A and B
+		   flock(fd, LOCK_EX); // Blocked till lock is acquired
+		   // Do any write operation on fd
+		   write(fd, *buf, count);
+		   flock(fd, LOCK_UN); // Unlock
+		\end{verbatim} 
+		
+		Also, if there are concurrent requests to access an I/O device like disk, OS serializes the requests during the process of disk scheduling.
 		
 			
 		\item				
