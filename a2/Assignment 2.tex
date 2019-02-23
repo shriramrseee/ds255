@@ -28,7 +28,7 @@
 		      The evolution of Virtual Machine requirements and its impact in system design is detailed below,
 		      \begin{enumerate}
 		      	\item The requirement of supporting multiple privileged kernels lead to the bare machine to support multiple processor privileged modes natively (more than two) 
-		      	\item Virtual machines required to support different ISAs for each application on same OS leading to the creation of ABI virtualization in the form of process VMs. This lead to change in the design of OS to support isolation artifacts such as containers (cgroups) and of compilers to support virtual ISA
+		      	\item Virtual machines required to support different ISAs for each application on same OS leading to the creation of ABI virtualization in the form of process VMs. This lead to change in the design of OS to support isolation artefacts such as containers (cgroups) and of compilers to support virtual ISA
 		      	\item VMs evolved and needed to support multiple ISAs. This lead to a system design to support emulation of a target ISA in a host ISA with hardware support  
 		      	\item The need for hosted VMs (para-virtualization) gave rise to a new design where the host OS provides device drivers and other low level services and the privileged instructions from Guest OS is trapped and handled by the host
 		      	\item VMs were required to provide the performance of bare machine along with isolation. This gave rise to the new notion of binding the application code with specific kernel libraries leading to the concept of Unikernels
@@ -50,7 +50,7 @@
 		     \end{enumerate}
 	          The after effects of this syndrome are as follows,
 	          \begin{enumerate}
-	          	\item Large number of severly underutilized servers with true utilization in the range of 5-12\% on average in many organizations
+	          	\item Large number of severely underutilized servers with true utilization in the range of 5-12\% on average in many organizations
 	          	\item Increase in Total Cost of Ownership (TCO) (capital + operational expense) due to wastage of resources and large staff required for management
 	          	\item Applications were not able to scale effectiviely as per the demand due to 1:1 relationship with the hardware and operating system
 	          	\item Increased adoption of server virtualization manifested in data centers to combat this syndrome leading to innovations in virtualization technology   	
@@ -58,7 +58,7 @@
           
        \item IaaS (Infrastructure as a Service)
              \begin{enumerate}
-             	\item The main abstractions/services provided in this layer are the following: Compute, Storage and Networking services. These are availabe to users as follows,
+             	\item The main abstractions/services provided in this layer are the following: Compute, Storage and Networking services. These are available to users as follows,
              	\item The Compute is abstracted as virtual machines for the users generally following different pricing models such as on-demand, prepaid etc.
              	\item The Storage is abstracted as storage pools or buckets which are accessible through APIs, web etc. These are composed of distributed storage systems like SAN in the backend
              	\item The Network is abstracted as virtual network on the cloud. The cloud providers generally offer load balancing, firewall and DNS services as part of Networking infrastructure
@@ -97,7 +97,7 @@
                 \end{enumerate}
                 Resource Management
                 \begin{enumerate}
-                	\item Resources in cloud are virually unlimited and typically shared by users at all the time as opposed to dedicated resources governed by queueing system in traditional setup. This allows for running interactive applications on the cloud
+                	\item Resources in cloud are virtually unlimited and typically shared by users at all the time as opposed to dedicated resources governed by queueing system in traditional setup. This allows for running interactive applications on the cloud
                 	\item Cloud data storage natively enables data locality for its applications through partitioning, pushing compute to data etc. whereas data centers rely on shared file systems and schedulers to achieve the same goal
                 	\item Cloud largely employs virtualization techniques to serve multiple users and applications on demand with efficient resource usage. Traditional data centers generally do not use virtualization mainly for performance reasons
                 \end{enumerate}
@@ -113,7 +113,7 @@
          \item	The following points highlight the key rationale behind moving to hyperconverged data centers,
                 \begin{enumerate}
                 	\item Traditional virtualization methods used in data centers mainly focused on compute therefore leaving storage, networking and data protection outside. This has caused problems for administrators in integrating all the resources efficiently for their applications
-                	\item Current data center infrastructure consists of seperate, scattered and difficult to scale physical resources like storage, networking etc. which cannot be efficiently pooled and leading to low system utilization. This has lead to inflexibility in provisioning right amount of resources for different applications
+                	\item Current data center infrastructure consists of separate, scattered and difficult to scale physical resources like storage, networking etc. which cannot be efficiently pooled and leading to low system utilization. This has lead to inflexibility in provisioning right amount of resources for different applications
                 	\item Hyperconverged infrastructure enable agile development environments that can natively support rapid software-release cycles and instantaneous resource provisioning through its unified management layer which was not feasible earlier in the traditional setup
                 	\item There is a push towards self-service IT where application developers can provision and manage resources on their own without the need for specialized professional assistance. Software Defined Networking (SDN), Software Defined Data Center (SDDC) etc. can satisfy this requirement
                 	\item It enables the paradigm of total virtualization where an entire data center can be treated and priced as an utility. It provides improved control and efficieny. It allows applications to be combined with all its hardware resources to be abstracted as a unified logical application.
