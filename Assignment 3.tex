@@ -19,7 +19,24 @@
 	
 	\begin{enumerate}
 		\item
-		\item
+		\item Emulation is the process of implementing the interface and functionality of one system on another system having a different interface and functionality. It can be used to construct VMs for different ISA scenario by emulating one instruction set on hardware designed for another through techniques like interpretation and binary translation.
+		
+		Simulation is different from emulation in the sense that it tries to model the environment or functionalities of one system inside software with some approximations and use it run a software designed for that system. Simulation can be used to realize virtual machines although it comes with certain limitations. Some of the key differences are given below,
+		
+		\begin{center}
+			\begin{tabular}{|p{6cm}|p{6cm}|}
+				\hline 
+				\textbf{Emulation}  & \textbf{Simulation} \\
+				\hline
+				Emulation can accurately implement a system's functionality and interface & Simulation is just a software model and so can potentially be inaccurate or approximate\\
+				\hline
+				Emulation can achieve better performance as it generally implemented in a lower abstraction layer and supported by hardware & Simulation has a negative impact on performance as it is generally run inside a computer program which is a higher abstraction layer\\
+				\hline 
+				Emulation is rigid and quite challenging to continously adapt to change in design & Simulation is a better tool in rapidly adapting to design changes as it is essentially a program \\ 
+				\hline
+				\end{tabular}
+		\end{center}	
+		
 		\item Virtualization is not exactly the same as abstraction but somewhat similar. Virtualization differs in the sense that it does not necessarily hide details (i.e) the level of detail in a virtual system is often same as that of the real system. While the goal of abstraction is to hide the complexities of one layer in a system from another. However, both virtualization and abstraction provides an additional layer of interface between two existing layers in a system.
 		
 	    Example: An hard disk is divided into sectors, tracks etc. But an application can read/write files in hard disk without the knowledge of structure of hard disk. This is abstraction where details are hidden. A Virtual machine can perform all kind of operations that it would perform on a real hardware. This is virtualization where the same level of interface / details is available to virtual machine. 
@@ -31,7 +48,12 @@
 		\textbf{API} - Application Programming Interface (API) provides access to user ISA and standard libraries. Applications can invoke various system services through the library. The API provides an abstraction (sometimes a wrapper) to the implementation of these services. High Level Language (HLL) VMs are defined in this layer. 
 		\item 
 		\item
-		\item  
+		\item \textbf{Different OS - Same ISA} - It is feasible to have para-virtualization. Despite being a different OS, the hypervisor can still modify the guest OS to trap the privileged instructions
+		
+		\textbf{Same OS - Different ISA} - It is not feasible to have para-virtualization if the ISAs are different. This is because para-virtualization on its own cannot perform emulation or binary translation to convert source to target ISA
+		
+		\textbf{Different OS - Different ISA} - It is not feasible to have para-virtualization in this case as well. The reason is same as above that the para-virtualization is designed to work on same ISA scenarios with modification to guest OS
+		
 		\item Desirable characteristics in an ISA for Emulation are as follows,
 		      \begin{enumerate}
 		      	\item Self-modifying and self-referencing code should not be permitted as it incurs additional challenges and overhead to emulation
@@ -48,7 +70,8 @@
     
     \textbf{References}
     \begin{enumerate}
-    	\item To be Added    	
+    	\item Jim Smith and Ravi Nair - Virtual Machines: Versatile Platforms for Systems and Processes 
+    	\item Course Lecture Notes   	
     \end{enumerate}
  
 
