@@ -18,19 +18,33 @@
 	\maketitle	
 	
 	\begin{enumerate}
-		\item The two mainstream techniques for virtualizing a system are: System VMs and Process VMs. The key differences between the two are described below:
+		\item The two mainstream techniques for virtualizing a system are: System VMs and Process VMs. Some of the key differences between the two are described below:
 		
-		\textbf{System abstraction layer} - System VMs are realized in the ISA/HAL abstraction layer. Process VMs are realized in ABI (application binary interface) abstraction layer or API (Application programming inteface) abstraction layer
+		\textbf{System Abstraction Layer} - System VMs are realized in the ISA/HAL abstraction layer. Process VMs are realized in ABI (application binary interface) abstraction layer or API (Application programming interface) abstraction layer. The Process VMs realized in API layer are also known as HLL (High Level Language) VMs.
 		
-		\textbf{Shared Resources} - The system VMs share only the execution hardware which includes I/O devices, controllers, MMU, system interconnect (bus) and in some cases CPU cores. Process VMs in addition to execution hardware also share the same OS kernel (drivers + scheduler etc.) and possibly some libraries as well
+		\textbf{Shared Resources} - The system VMs share only the execution hardware which includes I/O devices, controllers, MMU, system interconnect (bus) and in some cases CPU cores. Note that some of these resources like CPU cores can be partitioned across VMs as well (i.e) dedicated to each VM.
 		
-		\textbf{Performance} - System VMs provide better performance as they are manifested in lower abstraction layer. Process VMs are however lightweight in terms of deployment but does not offer good performance compared to System VMs
+		Process VMs in addition to execution hardware also share the same OS kernel (drivers + scheduler etc.) and possibly some libraries as well. This indicates that more resources are shared among Process VMs compared to System VMs.
 		
-		\textbf{Security} - System VMs provide greater isolation between the guests thereby interference between them is minimized. However, vulnerabilities in the hypervisor can be exploited by the guest code to break the isolation. Process VMs are less secure compared to system VMs in terms of isolation since a fault due to user code in one process can potentially bring down the entire system through kernel panic thereby affecting other process VMs in the same system
+		\textbf{Performance} - System VMs provide better performance as they are manifested in lower abstraction layer. Process VMs are however lightweight in terms of deployment but does not offer good performance compared to System VMs.
 		
-		\item Emulation is the process of implementing the interface and functionality of one system on another system having a different interface and functionality. It can be used to construct VMs for different ISA scenario by emulating one instruction set on hardware designed for another through techniques like interpretation and binary translation.
+		\textbf{Security} - System VMs provide greater isolation between the guests thereby interference between them is minimized. However, vulnerabilities in the hypervisor can be exploited by the guest code to break the isolation.
 		
-		Simulation is different from emulation in the sense that it tries to model the environment or functionalities of one system inside software with some approximations and use it run a software designed for that system. Simulation can be used to realize virtual machines although it comes with certain limitations. Some of the key differences are given below,
+		Process VMs are less secure compared to system VMs in terms of isolation since a fault due to user code in one process can potentially bring down the entire system through kernel panic thereby affecting other process VMs in the same system.
+		
+		To summarize, considering the goals of virtualization in terms of efficiency, isolation and safety: System VMs should generally satisfy isolation and safety goals better than Process VMs. Process VMs sometimes wins in terms of efficiency as it is lightweight.
+		
+		\item Emulation is the process of implementing the interface and functionality of one system on another system having a different interface and functionality.
+		
+		It can be used to construct VMs for different ISA scenario by emulating one instruction set on hardware designed for another through techniques like interpretation and binary translation.
+		
+		Simulation is different from emulation in the sense that it tries to model the environment or functionalities of one system inside software with some approximations and use it run a software designed for that system.
+		
+		Simulation can be used to realize virtual machines although it comes with certain limitations. It can be used in evaluation or experimental study of new systems. Some of the key differences are given below,
+		
+		\begin{Verbatim}
+					
+		\end{Verbatim}
 		
 		\begin{center}
 			\begin{tabular}{|p{6cm}|p{6cm}|}
@@ -41,53 +55,84 @@
 				\hline
 				Emulation can achieve better performance as it generally implemented in a lower abstraction layer and supported by hardware & Simulation has a negative impact on performance as it is generally run inside a computer program which is a higher abstraction layer\\
 				\hline 
-				Emulation is rigid and quite challenging to continously adapt to change in design & Simulation is a better tool in rapidly adapting to design changes as it is essentially a program \\ 
+				Emulation is rigid and quite challenging to continuously adapt to change in design & Simulation is a better tool in rapidly adapting to design changes as it is essentially a program \\ 
 				\hline
 				\end{tabular}
 		\end{center}	
 		
-		\item Virtualization is not exactly the same as abstraction but somewhat similar. Virtualization differs in the sense that it does not necessarily hide details (i.e) the level of detail in a virtual system is often same as that of the real system. While the goal of abstraction is to hide the complexities of one layer in a system from another. However, both virtualization and abstraction provides an additional layer of interface between two existing layers in a system.
+		\item Virtualization is not exactly the same as abstraction but somewhat similar. Virtualization differs in the sense that it does not necessarily hide details (i.e) the level of detail in a virtual system is often same as that of the real system.
 		
-	    Example: An hard disk is divided into sectors, tracks etc. But an application can read/write files in hard disk without the knowledge of structure of hard disk. This is abstraction where details are hidden. A Virtual machine can perform all kind of operations that it would perform on a real hardware. This is virtualization where the same level of interface / details is available to virtual machine. 
+		Example: A Virtual machine can perform all kind of operations that it would perform on a real hardware. This is virtualization where the same level of interface / details is available to virtual machine.
 		
-		\item \textbf{ISA} - Instruction Set Architecture (ISA) is the interface between hardware and software layer of a system. Application programs and operating system code interact with the hardware through ISA. It is generally divided into user and system ISAs targeted for user applications and OS operations respectively. All System VMs are defined in this layer.
+		While the goal of abstraction is to hide the complexities of one layer in a system from another. However, both virtualization and abstraction provides an additional layer of interface between two existing layers in a system.
 		
-		\textbf{ABI} - Application Binary Interface (ABI) provides applications with user instructions (user ISA) and system call interface. The system call interface is used to request privileged functions related to shared hardware etc. Note that the system ISA is not exposed to applications in this interface. Process VMs are defined in this layer.
+	    Example: An hard disk is divided into sectors, tracks etc. But an application can read/write files in hard disk without the knowledge of structure of hard disk. This is abstraction where details are hidden.	     
 		
-		\textbf{API} - Application Programming Interface (API) provides access to user ISA and standard libraries. Applications can invoke various system services through the library. The API provides an abstraction (sometimes a wrapper) to the implementation of these services. High Level Language (HLL) VMs are defined in this layer. 
+		\item \textbf{ISA} 
+		\begin{enumerate}
+			\item Instruction Set Architecture (ISA) is the interface between hardware and software abstraction layer of a system
+			\item Application programs and operating system code interact with the hardware through ISA
+			\item It is generally divided into User and System ISAs targeted for user applications and OS operations respectively
+			\item All System VMs are defined in this layer
+		\end{enumerate}    
+		
+		\textbf{ABI}
+		\begin{enumerate}
+			\item Application Binary Interface (ABI) provides applications with user instructions (User ISA) and system call interface
+			\item System call interface is used to request privileged functions related to shared hardware etc.
+			\item Note that the system ISA is not exposed to applications in this interface
+			\item Process VMs are defined in this layer
+		\end{enumerate}   
+		
+		\textbf{API}
+		\begin{enumerate}
+			\item Application Programming Interface (API) provides access to user ISA and standard libraries
+			\item Applications can invoke various system services through the library
+			\item API provides an abstraction (sometimes a wrapper) to the implementation of these services
+			\item High Level Language (HLL) VMs are defined in this layer
+		\end{enumerate}
+	
+	    \begin{Verbatim}
+	    	      
+	    \end{Verbatim}   
 		
 		\item The challenges in building virtualization support at hardware level are as follows,
 			\begin{enumerate}
-				\item 
-				\item Hardware based ISA translation poses a limitation in code optimization capabilites. Techniques lile inter-instruction optimization, batch optimization are difficult to directly implement in hardware level.
-				\item 
-				\item 
+				\item Emulators for different ISAs especially CISC based are challenging to construct in hardware without any software support. 
+				\item Hardware based ISA translation poses a limitation in code optimization capabilities. Techniques like inter-instruction optimization, batch optimization are difficult to directly implement in hardware level.
+				\item Making the hardware aware of the exact context of execution of processes in each virtual machines is one of the biggest challenge and prohibits higher efficiency
+				\item Design is rigid being at hardware level and so it is challenging to adopt changes to other higher abstraction layers and to add functionalities to support arbitrary guest OS or ISA 
 				\item Virtualizing I/O devices is difficult since it requires additional support from hardware to export these as virtual I/O devices 
 			\end{enumerate}
 		     The benefits of having virtualization support built in hardware are as follows,
 		     \begin{enumerate}
-		     	\item Hardware support can remove the need for paravirtualization and can avoid I/O emulation for direct-mapped I/O devices
+		     	\item Hardware support can remove the need for para-virtualization and can avoid I/O emulation for direct-mapped I/O devices
 		     	\item It makes the VM state management simple by allowing the states to be stored in native structures during virtual machine execution
-		     	\item Hardare support for Interrupt virtualization in terms of handling external interrupts and interrupt masking greatly simplifies the complexity of VM design
+		     	\item Hardware support for Interrupt virtualization in terms of handling external interrupts and interrupt masking greatly simplifies the complexity of VM design
 		     	\item Hardware based VMs can provide performance comparable to non-virtualized systems as it avoids the additional software layer for Hypervisor
 		     	\item It eliminates the need for shadow page table maintenance used by the hypervisor therefore saving memory. This also reduces memory translation overhead
 		     \end{enumerate}		
 		
-		\item The comparison of emulation, binary translation and para-virtualization in terms of different parameters is given below,
+		\item The comparison of Interpretation, Binary translation and Para-virtualization in terms of different parameters is given below,
 		
 		\begin{center}
 			\begin{tabular}{|p{2cm}|p{4cm}|p{4cm}|p{4cm}|}
 				\hline 
-				\textbf{Parameter}  & \textbf{Emulation} & \textbf{Binary Translation} & \textbf{Para-virtualization} \\
+				\textbf{Parameter}  & \textbf{Interpretation} & \textbf{Binary Translation} & \textbf{Para-virtualization} \\
 				\hline
-				Legacy applications & & & \\
+				Legacy applications & Offers great support irrespective the source ISA (RISC or CISC). But not a good choice if the legacy code is unoptimized & Support depends on ISA and mitigation of problems like code discovery and location using incremental translation   & Support is limited since it requires modification of guest code. Also, if the ISA is different then this technique cannot be used\\
 				\hline
-				Legacy runtime environments & & & Needs modification of guest. So, if the legacy env. is proprietary, then supported is highly limited\\
+				Legacy runtime environments & Not recommended as optimization support is limited which is critical for runtime environments & Offers best support since runtime environment offers large scope for optimization which is one-time & Needs modification of guest. So, if the legacy env. is proprietary, then supported is highly limited\\
 				\hline
-				Application performance & Low translation cost but high execution cost and can affect performance since there is no optimization & High translation cost and low execution cost and can improve performance if the code gets optimized & Overheads of interacting with guest device driver or guest software is reduced. Improves performance of the VM\\
+				Application performance & Low translation cost but high execution cost and can affect performance since there is no code optimization and also higher overheads & High translation cost and low execution cost and can improve performance greater than interpretation if the code gets optimized & Overheads of interacting with guest device driver or guest software is reduced. Improves performance of the VM to better than Emulation techniques\\
 				\hline
 			\end{tabular}
 		\end{center}
+	
+	    \begin{Verbatim}
+	    
+	    
+	    \end{Verbatim} 
 		
 		\item \textbf{Different OS - Same ISA} - It is feasible to have para-virtualization. Despite being a different OS, the hypervisor can still modify the guest OS to trap the privileged instructions
 		
