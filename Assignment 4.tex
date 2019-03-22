@@ -1,0 +1,81 @@
+\documentclass[11pt,a4paper,oneside]{article}
+\usepackage[latin1]{inputenc}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{graphicx}
+\usepackage{color}
+\usepackage {tikz}
+\usepackage{fancyvrb}
+\usetikzlibrary {er}
+\usepackage[left=2.00cm, right=2.00cm, top=1.00cm]{geometry}
+\graphicspath{{./}}
+\fvset{tabsize=4}
+
+\begin{document}
+	\title{DS 255 - System Virtualization \\ Assignment IV - System Virtual Machines}
+	\author{Shriram R. \\ M Tech (CDS) \\ 06-02-01-10-51-18-1-15763}
+	\maketitle	
+	
+	\begin{enumerate}
+		\item It is important for VMM to handle the timer interrupt as it provides an opportunity for gaining control of the system to enable the time sharing of resources among different guest VMs. When a timer interrupt occurs, the VMM executes a code which performs the following operations
+		\begin{enumerate}
+			\item Save the architected state of running VM and determine the next VM to be activated
+			\item Restore the architected state for next VM and set timer interval and enable interrupts
+			\item Set PC to timer interrupt handler of OS in next VM
+		\end{enumerate}
+	    The guest OS must be denied direct access to timer interrupt to ensure a fair scheme of time sharing of resources to work. Otherwise, the guest will have access to reschedule the next timer interrupt which can degrade performance of other running VMs. This is why the guest OS is provided with virtual emulated timer interrupt by the VMM.
+	    
+	    Also, it might not be feasible to ensure transparency by VMM if the guest is allowed to read the real timer interrupt value set by the VMM. Lack of transparency might cause the guest OS to behave differently when running under a VMM than a real machine.
+		\item 
+		\item There are different variants for the standard time-sharing CPU scheduler as implemented in \emph{Xen} hypervisor. They are: (a) Borrowed Virtual Time (BVT) scheduler, (b) Simple Earliest Deadline First (SEDF) scheduler and (c) Credit Scheduler. 
+		
+		For the given scenario of three VMs on top of a single CPU, SEDF scheduler can be used. The goals of this scheduler is to increase \emph{fairness} which is the time interval over which the scheduler provides fair CPU allocation and decrease \emph{allocation error} which is the relative difference between requested CPU use percentage and the actual/observed CPU use percentage for a given VM.
+		
+		The SEDF scheduler achieves these goals as follows:
+		\begin{enumerate}
+			\item For each VM, it maintains a domain $Dom_i$, slice $s_i$, period $p_i$ and a flag $x_i$. These indicates that the $Dom_i$ will receive at least $s_i$ units of CPU in period $p_i$. If $x_i$ is true, scheduler follows \emph{work-conserving} policy or else \emph{non-work-conserving}
+			\item For each $Dom_i$, scheduler maintains deadline $d_i$ which is the time at which the current period ends and $r_i$ which is the remaining time of $Dom_i$ in current period. The runnable domain with earliest deadline is picked to be scheduled next
+			\item The fairness and allocation error are calibrated by the time granularity in the definition of period $p_i$. E.g. 10ms, 100ms etc. Lower granularity will achieve better fair share allocation with larger period leading to "burstier" CPU allocation
+			\item In general, this scheduler can achieve consistently low allocation error for different target CPU allocation while maintaining fairness of allocation
+		\end{enumerate}
+ 		\item The TLB consists of guest virtual address (GVA) to host physical address (HPA) mapping irrespective of whether the page table or the TLB is architected.
+ 		
+ 		The shadow page tables increase the memory access latency though it reduces one level of indirection since there is a significant overhead in intercepting and emulating the guest's modification of page table by the hypervisor. Also, note that the shadow page tables are maintained by hypervisor causing multiple VM exits and intervention of hypervisor in case of page table writes.
+ 		
+ 		Nested page table support is needed at the hardware level to reduce this latency caused by shadow paging. It uses a second page table to translate Guest Physical Address (GPA) to HPA. The page walking now becomes two dimensional with two page tables: Guest page table with GVA to GPA and host page table with GPA to HPA. 
+ 		
+ 		The nested paging is already available with AMD and Intel architectures (VT-X) as part of their hardware virtualization support.
+ 		
+		\item 
+		\item 
+		\item 
+		\item
+		
+	
+		
+%		\begin{center}
+%			\begin{tabular}{|p{6cm}|p{6cm}|}
+%				\hline 
+%				\textbf{Emulation}  & \textbf{Simulation} \\
+%				\hline
+%				Emulation can accurately implement a system's functionality and interface & Simulation is just a software model and so can potentially be inaccurate or approximate\\
+%				\hline
+%				\end{tabular}
+%		\end{center}			
+		    
+	         %\begin{center}
+	         %   \includegraphics[scale=0.6]{1.png}	[4]
+	         %\end{center}			
+	\end{enumerate}
+    
+    \textbf{References}
+    \begin{enumerate}
+    	\item Jim Smith and Ravi Nair - Virtual Machines: Versatile Platforms for Systems and Processes 
+    	\item Ludmila Cherkasova, Diwaker Gupta, and Amin Vahdat. 2007. Comparison of the three CPU schedulers in Xen. SIGMETRICS Perform. Eval. Rev. 35, 2 (September 2007), 42-51. DOI: https://doi.org/10.1145/1330555.1330556
+    	\item Course Lecture Notes   	
+    \end{enumerate}
+ 
+
+    
+\end{document}
