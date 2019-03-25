@@ -47,29 +47,57 @@
  		
  		The nested paging is already available with AMD and Intel architectures (VT-X) as part of their hardware virtualization support.
  		
-		\item 
+		\item Some of the advantages and disadvantages of using segmentation for memory virtualization in hypervisor are given below,
+		\begin{center}
+			\begin{tabular}{|p{6.5cm}|p{6.5cm}|}
+				\hline 
+				\textbf{Advantages}  & \textbf{Disadvantages} \\
+				\hline
+				Conversion of gVA (guest vir. addr.) to hPA (host phy. addr.) can be faster by avoiding 2-D page walk and using segment base address to simply add the offset to the resgister value & It may lead to the problem of fragmentation if different large sized segments are statically allocated to each VM leading lesser memory space utilization efficiency\\
+				\hline
+				Hypervisor can incur less overhead in terms of storing segmentation tables as these are smaller than page tables. Bound checking and access control mechanisms in hypervisor becomes simple and fast in case of segmentation &  Emulating a paged memory structure to the guest OS when the underlying vitualizaton mechanism is segmentation becomes a challenge. Also, considerable hardware support is necessary to implement segmentation successfully\\
+				\hline
+				\end{tabular}
+		\end{center}
+	    Some of the hardware support needed in MMU is listed below,
+	    \begin{enumerate}
+	    	\item Segmentation table with base, limit and access control entries for each VM. This will avoid the overhead of translating each gPA to hPA by the hypervisor in software
+	    	\item Hybrid support for both paging and segmentation together if the guest OS use paging and hypervisor uses segmentation
+	    	\item Two level segmentation is needed if guest OS uses segmentation for code, data segments etc. and hypervisor uses segmentation
+	    \end{enumerate}
+		
 		\item The TLB Reach is defined as the product of page size and TLB size. Given page size = 4KB and TLB size = 1024. Therefore the TLB Reach = 4MB.
 		
 		If the program has large working set size (2GB in this case), the TLB reach can be increased by using large pages. For example, Intel x86-64 supports large page size of 2MB and Linux kernel manages these pages using the HugePages feature. With this increased page size, the TLB reach grows to 2GB and can cover the entire program memory. 
+		
 		\item The 2-D page walk diagram for 2MB page size using 48-bit virtual address is given below,
-		 \begin{center}
+		\begin{center}
 		   \includegraphics[scale=0.6]{1.png}
 		\end{center}
 	    The numbers on top of arrows indicate the sequence of page table walk. It requires 12 memory accesses to get the frame number of the desired physical page. Large page sizes help in reducing the latencies by increasing the TLB reach and reducing the no. of levels in a page table.
-		\item
 		
-	
+		\item The following workflow is taken from VMware workstation example consisting of a hosted system VM with three main components namely: VMApp (application portion of VMM), VMM (priviliged virtual machine monitor) and VMDriver (facilitates control transfer between host and VMM). 
 		
-%		\begin{center}
-%			\begin{tabular}{|p{6cm}|p{6cm}|}
-%				\hline 
-%				\textbf{Emulation}  & \textbf{Simulation} \\
-%				\hline
-%				Emulation can accurately implement a system's functionality and interface & Simulation is just a software model and so can potentially be inaccurate or approximate\\
-%				\hline
-%				\end{tabular}
-%		\end{center}			
-		    
+	    \begin{center}
+	    	\includegraphics[scale=0.5]{2.png} \\
+	    	Virtual NIC Workflow
+	    \end{center}
+    
+       The following steps occur during a packet send operation,
+       \begin{enumerate}
+       	\item The guest OS driver initiates packet request by writing to virtual I/O ports which switches back to VMApp through the VMDriver
+       	\item The VMApp makes a host OS system call which in turn invokes the VMNet driver
+       	\item The VMNet driver runs the bridge code which forwards the packet to physical NIC through the host ethernet driver 
+       \end{enumerate}
+   
+       The following steps occur during a packet receive operation,
+       \begin{enumerate}
+       	\item Packet receive happens in reverse. Bridged host NIC delivers the packet to VMNet. 
+       	\item VMApp periodically runs select() to the VMNet and requests the VMM to raise a virtual IRQ if there is any incoming packet
+       	\item The VMM posts the virtual IRQ and guest's driver issues a sequence of I.O accesses to ack. the receipt to the hardware
+       \end{enumerate}
+		
+		
 	        			
 	\end{enumerate}
     
@@ -79,6 +107,7 @@
     	\item Ludmila Cherkasova, Diwaker Gupta, and Amin Vahdat. 2007. Comparison of the three CPU schedulers in Xen. SIGMETRICS Perform. Eval. Rev. 35, 2 (September 2007), 42-51. DOI: https://doi.org/10.1145/1330555.1330556
     	\item https://docs.oracle.com/cd/E97728\_01/F12469/html/nestedpaging.html
     	\item https://docs.oracle.com/cd/E37670\_01/E37355/html/ol\_about\_hugepages.html
+    	\item Jeremy Sugerman, Ganesh Venkitachalam, and Beng-Hong Lim. 2001. Virtualizing I/O Devices on VMware Workstation's Hosted Virtual Machine Monitor. In Proceedings of the General Track: 2001 USENIX Annual Technical Conference, Yoonho Park (Ed.). USENIX Association, Berkeley, CA, USA, 1-14
     	\item Course Lecture Notes   	
     \end{enumerate}
  
