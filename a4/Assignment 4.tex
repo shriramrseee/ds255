@@ -27,7 +27,15 @@
 	    The guest OS must be denied direct access to timer interrupt to ensure a fair scheme of time sharing of resources to work. Otherwise, the guest will have access to reschedule the next timer interrupt which can degrade performance of other running VMs. This is why the guest OS is provided with virtual emulated timer interrupt by the VMM.
 	    
 	    Also, it might not be feasible to ensure transparency by VMM if the guest is allowed to read the real timer interrupt value set by the VMM. Lack of transparency might cause the guest OS to behave differently when running under a VMM than a real machine.
-		\item 
+		
+		\item The consequences of running multiple OSes without hypervisors are as follows,
+		\begin{enumerate}
+			\item The performance isolation and security should now be enforced by hardware in general
+            \item Different ISA emulation is now a challenge due to the absence of hypervisor
+            \item VM creation including resource allocation \& mgmt. has to be performed by the hardware
+		\end{enumerate}
+	    This type of configuration requires hardware or the ISA to provide hypervisor capabilities including VM management, isolation, emulation etc. This means that the hardware emulates the privileged role of a hypervisor leading to hardware based virtualization.
+		
 		\item There are different variants for the standard time-sharing CPU scheduler as implemented in \emph{Xen} hypervisor. They are: (a) Borrowed Virtual Time (BVT) scheduler, (b) Simple Earliest Deadline First (SEDF) scheduler and (c) Credit Scheduler. 
 		
 		For the given scenario of three VMs on top of a single CPU, SEDF scheduler can be used. The goals of this scheduler is to increase \emph{fairness} which is the time interval over which the scheduler provides fair CPU allocation and decrease \emph{allocation error} which is the relative difference between requested CPU use percentage and the actual/observed CPU use percentage for a given VM.
@@ -53,9 +61,9 @@
 				\hline 
 				\textbf{Advantages}  & \textbf{Disadvantages} \\
 				\hline
-				Conversion of gVA (guest vir. addr.) to hPA (host phy. addr.) can be faster by avoiding 2-D page walk and using segment base address to simply add the offset to the resgister value & It may lead to the problem of fragmentation if different large sized segments are statically allocated to each VM leading lesser memory space utilization efficiency\\
+				Conversion of gVA (guest vir. addr.) to hPA (host phy. addr.) can be faster by avoiding 2-D page walk and using segment base address to simply add the offset to the register value & It may lead to the problem of fragmentation if different large sized segments are statically allocated to each VM leading lesser memory space utilization efficiency\\
 				\hline
-				Hypervisor can incur less overhead in terms of storing segmentation tables as these are smaller than page tables. Bound checking and access control mechanisms in hypervisor becomes simple and fast in case of segmentation &  Emulating a paged memory structure to the guest OS when the underlying vitualizaton mechanism is segmentation becomes a challenge. Also, considerable hardware support is necessary to implement segmentation successfully\\
+				Hypervisor can incur less overhead in terms of storing segmentation tables as these are smaller than page tables. Bound checking and access control mechanisms in hypervisor becomes simple and fast in case of segmentation &  Emulating a paged memory structure to the guest OS when the underlying virtualizaton mechanism is segmentation becomes a challenge. Also, considerable hardware support is necessary to implement segmentation successfully\\
 				\hline
 				\end{tabular}
 		\end{center}
@@ -76,7 +84,7 @@
 		\end{center}
 	    The numbers on top of arrows indicate the sequence of page table walk. It requires 12 memory accesses to get the frame number of the desired physical page. Large page sizes help in reducing the latencies by increasing the TLB reach and reducing the no. of levels in a page table.
 		
-		\item The following workflow is taken from VMware workstation example consisting of a hosted system VM with three main components namely: VMApp (application portion of VMM), VMM (priviliged virtual machine monitor) and VMDriver (facilitates control transfer between host and VMM). 
+		\item The following workflow is taken from VMware workstation example consisting of a hosted system VM with three main components namely: VMApp (application portion of VMM), VMM (privileged monitor) and VMDriver (facilitates control transfer between host and VMM). 
 		
 	    \begin{center}
 	    	\includegraphics[scale=0.5]{2.png} \\
