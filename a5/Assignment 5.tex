@@ -24,19 +24,24 @@
 				\end{center}
 		Isomorphism is necessary to establish the accuracy in emulating the guest's behaviour on the host platform as compared with its behaviour on the native platform. It also enables transparency during the emulation process. Another consequence is that the state equivalence has to be maintained only during points of control transfer (Trap/System Call) and not necessarily at all times. This allows for flexibility in terms of code reorganization and optimization. 
 		
-		\item 
+		\item Some compatibility issues for different OS-ISA process VMs are discussed below,
+			\begin{enumerate}
+				\item Exceptions in the binary instructions : It is challenging to ensure the precision of exceptions which means that all source instructions before the instruction causing exception should have been executed and all instructions after it should not have executed. This is a problem especially in the case of binary translation. Also, it is not guaranteed that when source instruction causes exception, corresponding target also causes exception.
+				\item Exceptions in the emulator : Any exception in the emulator should not affect the isomorphism imposed by the state mapping. Doing so will cause incompatibility at the intrinsic level. The guest OS should be transparent to these exceptions since they are not directly caused by guest.
+				\item Exceptions in the host OS : If the exceptions in host OS are ABI visible in the guest, then it has to be passed to guest handler or else the runtime exception handler will have to determine how to handle the exception. In any case, the guest should be transparent to any exceptions in the host that are caused by other host applications. 
+			\end{enumerate}
 		
 		\item The compatibility aspects are met in Same OS-ISA process VMs as follows,
 			\begin{enumerate}
-				\item Two-level state : 
-				\item Traps : 
-				\item Register states : It is possible to have consistent register mapping since the ISAs are same. If no code reordering is done during translation/optimization, the source register state can be recovered from target at any point in execution
-				\item Memory state : If code reordering is done as part of binary optimization, then runtime trap handler can emulate the store instruction if trapping instruciton is moved ahead of  store or memory stores can be buffered if the trapping instruction is moved  below a store. If no code reordering is done, then memory state is consistent at all points in time
+				\item Two-level state : Both user-managed and OS-managed state can be mapped and maintained consistently since the OS and ISAs are same thereby ensuring isomorphism for compatibility.
+				\item Traps : The trap condition can be detected by host platform hardware since the ISAs are same. If source traps, target also traps. The ABI visibility of trapping condition is same on both host and guest OS platform. 
+				\item Register states : It is possible to have consistent register mapping since the ISAs are same. If no code reordering is done during translation/optimization, the source register state can be recovered from target at any point in execution.
+				\item Memory state : If code reordering is done as part of binary optimization, then runtime trap handler can emulate the store instruction if trapping instruction is moved ahead of  store or memory stores can be buffered if the trapping instruction is moved  below a store. If no code reordering is done, then memory state is consistent at all points in time.
 				\item Memory ordering : Exclusive locks are acquired on cache lines for stores 
 			 then flushing the buffer and restarting if a different processor
-				should attempt access to the line before the stores in the buffer are releasedThe coherence and memory ordering rules are same across host and guest and so no additional actions are required on the part of host system
-				\item Memory address space mapping : Direct translation method can be used if enough host space is available for contiguous storage since the memory architecture is consistent. The Guest address space can be contiguously mapped with an offset as long as the host contains enough contiguous space
-				\item Handling undefined architecture cases : 
+				should attempt access to the line before the stores in the buffer are released. The coherence and memory ordering rules are same across host and guest and so no additional actions are required on the part of host system.
+				\item Memory address space mapping : Direct translation method can be used if enough host space is available for contiguous storage since the memory architecture is consistent. The Guest address space can be contiguously mapped with an offset as long as the host contains enough contiguous space.
+				\item Handling undefined architecture cases : Special actions by the runtime and emulator are still needed since undefinded cases may cause different behaviour despite being same ISA-OS. Intrinsic compatibility is hard to achieve in this case.
 			\end{enumerate}
 		
 		\item Software translation table solves the following memory address space mapping issues,
@@ -64,7 +69,7 @@
 		
 		\item Reverse translation tables are used to recover the precise source program counter (PC) of the trapping source instruction to enable the restoration of state following an exception. The table essentially consists of $<$target PC, source PC$>$ pairs.
 		
-		One important use case is that, It is necessary to have this table for binary translation since it does not have a continuously updated version of source PC. Also, a given target instruction may correspond to more than one source instruction (E.g. mapping a RISC ISA to CISC ISA) or the target instructions might be reorganized. In these cases, the reverse translation table helps in identifying the analyzing/interpreting the original source code to find the correct source state and PC values.
+		One important use case is that, It is necessary to have this table for binary translation since it does not have a continuously updated version of source PC. Also, a given target instruction may correspond to more than one source instruction (E.g. translating a RISC ISA to CISC ISA) or the target instructions might be reorganized. In these cases, the reverse translation table helps in identifying the analyzing/interpreting the original source code to find the correct source state and PC values.
 		
 		\item Code cache replacement algorithm: Since the size of code cache is limited, these algorithms help in making space for new translations by removing old translated blocks from the cache. These algorithms have to consider the properties of code cache in dynamic binary optimizers which are a) fixed size, b) chaining of code blocks and c) the absence of "backing store" for storing a copy of cache contents. Some of the common algorithms are discussed below,
 		
@@ -74,11 +79,15 @@
 		
 		Disadvantage: All blocks that are actively used before the flush have to be retranslated from scratch leading to a high translation overhead after flush.
 		
-		\textbf{Preemptive Flush}: This monitors the rate at which the new translations are being performed to identify a program phase change or instruction working set change. When the rate increases, the code cache is preemptively flushed to allow space for new working set code. 
+		\textbf{Pre-emptive Flush}: This monitors the rate at which the new translations are being performed to identify a program phase change or instruction working set change. When the rate increases, the code cache is pre-emptively flushed to allow space for new working set code. 
 		
 		Advantage: Retranslation of working set is avoided in general since flush happens during the start of new working set thereby reducing the probability of cache full in the middle of a phase. 
 		
 		Disadvantage: Additional performance overhead is incurred in monitoring the rate of translation and triggering the flush is required. 
+		
+		$$P.T.O.$$
+		
+		\newpage
 		
 		\textbf{Fine-Grained FIFO}: The code cache is managed as a circular buffer with the oldest block being removed to have space for newest. This exploits temporal locality and is a non-brute force approach
 		
@@ -102,6 +111,7 @@
     \textbf{References}
     \begin{enumerate}
     	\item Jim Smith and Ravi Nair - Virtual Machines: Versatile Platforms for Systems and Processes  	
+    	\item Course lecture notes
     \end{enumerate}
  
 
